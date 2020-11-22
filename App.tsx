@@ -19,12 +19,23 @@ export default function App() {
 
   async function load() {
     try {
-      const { status } = async Location.requestPermissionsAsync();
-      if(status !== 'granted'){
-        setErrorMessage("Access to location is needed to run the app");
+      const { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMessage('Access to location is needed to run the app');
         return;
       }
-    } catch (error) {}
+
+      const location = await Location.getCurrentPositionAsync();
+      // console.log('location>>', location);
+      const { latitude, longitude } = location.coords;
+
+      const weatherUrl = `${BASE_URL}lat=${latitude}&lon=${longitude}&units=${unitSystem}&appid=${WEATHER_API_KEY}`;
+
+      const weatherData = await fetch(weatherUrl);
+      console.log('weatherData>>', await weatherData.json());
+    } catch (error) {
+      setErrorMessage(error);
+    }
   }
 
   return (
