@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 
 import * as Location from 'expo-location';
+import { colors } from './constants/Colors';
 
 const WEATHER_API_KEY = 'b062803a275ee4bc06537e95f676ab34';
 
@@ -31,19 +32,41 @@ export default function App() {
 
       const weatherUrl = `${BASE_URL}lat=${latitude}&lon=${longitude}&units=${unitSystem}&appid=${WEATHER_API_KEY}`;
 
-      const weatherData = await fetch(weatherUrl);
-      console.log('weatherData>>', await weatherData.json());
+      const response = await fetch(weatherUrl); // This gives json promise
+      const result = await response.json();
+      console.log('result>>', result);
+      if (response.ok) {
+        setCurrentWeather(result);
+      } else {
+        setErrorMessage(result.message);
+      }
     } catch (error) {
-      setErrorMessage(error);
+      setErrorMessage(error.message);
     }
   }
-
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+  if (currentWeather) {
+    const { name } = currentWeather;
+    return (
+      <View style={styles.container}>
+        <Text>{name}</Text>
+        <StatusBar style="auto" />
+      </View>
+    );
+  } else if (errorMessage) {
+    return (
+      <View style={styles.container}>
+        <Text>{errorMessage}</Text>
+        <StatusBar style="auto" />
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.PRIMARY_COLOR} />
+        <StatusBar style="auto" />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
