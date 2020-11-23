@@ -5,6 +5,8 @@ import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import { colors } from './constants/Colors';
 
+import WeatherInfo from './components/WeatherInfo';
+
 const WEATHER_API_KEY = 'b062803a275ee4bc06537e95f676ab34';
 
 const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather?';
@@ -45,10 +47,9 @@ export default function App() {
     }
   }
   if (currentWeather) {
-    const { name } = currentWeather;
     return (
       <View style={styles.container}>
-        <Text>{name}</Text>
+        <WeatherInfo currentWeather={currentWeather} />
         <StatusBar style="auto" />
       </View>
     );
